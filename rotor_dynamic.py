@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.integrate import simpson
 import aircraft_data as acd
 
 # === Rotor and Flight Parameters ===
@@ -42,6 +43,25 @@ alpha_deg = np.rad2deg(alpha_grid)
 # === Transform to nondimensional x-y plane (rotor disk) ===
 x = (r_grid / R) * np.cos(psi_grid)
 y = (r_grid / R) * np.sin(psi_grid)
+
+# === Compute flapping angle beta(ψ) ===
+# (for now, approximated as pitch input)
+beta = np.rad2deg(theta_0 + theta_1c_eff * np.cos(psi) + theta_1s_eff * np.sin(psi))
+
+# === --- Part 3: Fourier Series Coefficients --- ===
+beta_rad = np.radians(beta)  # Convert to radians
+
+# Integrate using Simpson’s rule for better accuracy
+beta_1c = (2 / np.pi) * simpson(beta_rad * np.cos(psi), x=psi)
+beta_1s = (2 / np.pi) * simpson(beta_rad * np.sin(psi), x=psi)
+
+# Disc tilt angles in radians (approx.)
+tilt_longitudinal = beta_1c
+tilt_lateral = beta_1s
+
+print("=== Disc Tilt Angles ===")
+print(f"Longitudinal Tilt (β₁c): {np.degrees(tilt_longitudinal):.3f} deg")
+print(f"Lateral Tilt (β₁s): {np.degrees(tilt_lateral):.3f} deg")
 
 # === Plotting ===
 fig, axs = plt.subplots(1, 2, figsize=(14, 6))
