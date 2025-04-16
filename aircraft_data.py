@@ -4,7 +4,7 @@ import numpy as np
 # From Jane's
 # NASA Lynx XY170
 # https://rotorcraft.arc.nasa.gov/Publications/files/Lau1993TM104000.pdf
-class Lynx():
+class HelicopterLynx():
     def __init__(self):
         self.mtow = 5330 # kg
         self.EmptyWeight = 3277 #kg
