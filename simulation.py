@@ -21,14 +21,14 @@ class Sim3DoF():
         self.Z = 0
         
         '''Controls'''
-        self.collective = np.deg2rad(7) # blade pitch angle (collective)
-        self.control = 0 # control plane angle
+        self.collective = np.deg2rad(5.38) # blade pitch angle (collective)
+        self.control = np.deg2rad(-1.9) # control plane angle
         
         '''States'''
         self.u = 70*0.5144 # Horizontal vel
         self.w = 0 # Vertical vel
         self.q = 0 # Pitch rate
-        self.theta = -0.2 # Pitch
+        self.theta = 0 # Pitch
         
         
         '''Extra'''
@@ -59,7 +59,7 @@ class Sim3DoF():
             
 
         
-    def MainLoop(self, dt = 0.05, runtime=60):
+    def MainLoop(self, dt = 0.01, runtime=10):
         current_sim_time = 0
         vel_des_kt = np.array([90,70,90,110])
         vel_des_ms = vel_des_kt * 0.514444
@@ -77,10 +77,10 @@ class Sim3DoF():
             '''Update physics'''
             self.Z += self.w*dt
             self.u += du*dt
-            self.w += dw*dt
+            self.w += dw*dt 
             self.q += dq*dt
             print('self.q: ', self.q)
-            if abs(self.theta + dtheta*dt) < np.deg2rad(80):
+            if abs(self.theta + dtheta*dt) < np.deg2rad(90):
                 self.theta += dtheta*dt
             current_sim_time += dt
             '''Append Logs'''
@@ -95,7 +95,7 @@ class Sim3DoF():
             u_des = vel_des_ms[stage]
             error_theta.append(self.theta-theta_des)
             theta_des = np.clip(SCfunc_PIDController(error_theta, k_p=0.5, t_i=False, t_d=2, dt=dt), 
-                                   a_min=np.deg2rad(-20), a_max=np.deg2rad(20))
+                                   a_min=np.deg2rad(-5), a_max=np.deg2rad(5))
             
             
             
@@ -103,8 +103,8 @@ class Sim3DoF():
             error_u.append(self.u-u_des)
             error_z.append(self.Z-z_des)
             '''Controller - Control'''
-            # self.control = -1*np.clip(SCfunc_PIDController(error_theta, k_p=0.25, t_i=False, t_d=2, dt=dt), 
-            #                        a_min=np.deg2rad(-60), a_max=np.deg2rad(60))
+            # self.control = -1*np.clip(SCfunc_PIDController(error_theta, k_p=1.2, t_i=50, t_d=2, dt=dt), 
+            #                        a_min=np.deg2rad(-360), a_max=np.deg2rad(360))
             # self.collective = np.clip(SCfunc_PIDController(error_z, k_p=0.001, t_i=False, t_d=0, dt=dt),
             #                           a_min=np.deg2rad(0), a_max=np.deg2rad(2))
             '''Controller - Log'''
@@ -255,15 +255,27 @@ if test:
         plt.legend()
         plt.show()
         plt.clf()
-    
-    plt.plot(sim.log_time, sim.log_control, label='cyclic pitch')
-    # plt.show()
-    # plt.plot(sim.log_time, sim.log_u[0])
-    plt.plot(sim.log_time, sim.log_theta[0], label='pitch')
-    plt.plot(sim.log_time, sim.log_theta_des, label='desired pitch')
-    plt.plot(sim.log_time, sim.log_theta[1], label='pitch rate')
+
+
+    plt.plot(sim.log_time, np.rad2deg(sim.log_theta[0]), label='Pitch')
+    plt.plot(sim.log_time, np.rad2deg(sim.log_theta[1]), label='Pitch rate')
+    plt.grid(True)
+    plt.title('Westland Lynx Phugoid (Pitch)')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Pitch [deg]')
     plt.legend()
     plt.show()
+    plt.clf()
+    
+    plt.plot(sim.log_time, sim.log_u[0], label='Forward')
+    plt.plot(sim.log_time, sim.log_w[0], label='Vertical')
+    plt.grid(True)
+    plt.title('Westland Lynx Phugoid (Speed)')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Velocity [m/s]')
+    plt.legend()
+    plt.show()
+    plt.clf()
     
 else:
     print('simulation.py Testing mode is OFF')
