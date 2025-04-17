@@ -5,10 +5,8 @@ import aircraft_data as acd
 
 # === Rotor and Flight Parameters ===
 V = 20                  # Forward flight speed (m/s)
-V_tip = 700          # Tip speed (ft/s) given in NASA report
-V_tip = V_tip * 0.3048  # Convert ft/s to m/s
+Omega = 326 / 60 * 2 * np.pi  # Rotor angular speed (rad/s), from Diktaat
 R = acd.HelicopterLynx().rotor_d / 2     # Rotor radius (m)
-Omega = V_tip / R              # Rotor angular speed (rad/s)
 n_radial = 50
 n_azimuth = 360
 
