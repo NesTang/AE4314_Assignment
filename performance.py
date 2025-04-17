@@ -84,7 +84,6 @@ class BEM():
         self.dlda = 0.768/5.5 # Slope of CL-alpha [-/deg]
 
         self.CT = self.calc_CT()
-        #TODO
         # calculate each blade's thrust and power in hover
         # becasue its in hover, all blade is equal, multipling result by 4
         sample = 1000
@@ -144,7 +143,7 @@ class BEM():
         alpha = self.twist(station) - psi # angle of attack
         
         cl = np.clip(self.dlda*np.rad2deg(alpha),a_min=0,a_max=10) # element lift coeff
-        cd = 0.011 # element drag coeff # TODO: finish this
+        cd = 0.011 # element drag coeff
 
         dL = 0.5 * rho * U**2 * cl * self.chord * dr # element lift
         dD = 0.5 * rho * U**2 * cd * self.chord * dr # element drag
@@ -227,3 +226,6 @@ if test:
     plt.ylabel('Power [kW]')
     plt.legend()
     plt.show()
+    
+else:
+    print('performance.py Testing mode is OFF')
