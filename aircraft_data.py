@@ -21,4 +21,6 @@ class HelicopterLynx():
 
         self.disk_area = (self.rotor_d/2)**2 * np.pi
         self.disk_load = self.mtow/self.disk_area # kg/m2
+        print('self.disk_load: ', self.disk_load)
         
+HelicopterLynx()
